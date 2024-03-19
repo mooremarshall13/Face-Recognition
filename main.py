@@ -1,15 +1,20 @@
 import cv2
 import numpy as np
+import json
+
+# Initialize camera
+cap = cv2.VideoCapture(0)
 
 # Load trained model
 recognizer = cv2.face.LBPHFaceRecognizer_create()
 recognizer.read("trained_model.yml")
 
-# Initialize camera
-cap = cv2.VideoCapture(0)
-
 # Load face cascade
 face_cascade = cv2.CascadeClassifier("model/haarcascade_frontalface_default.xml")
+
+# Load metadata (folder names)
+with open("metadata.json", "r") as f:
+    folder_names = json.load(f)
 
 while True:
     ret, frame = cap.read()
@@ -21,7 +26,8 @@ while True:
         # Recognize the face
         label, confidence = recognizer.predict(roi_gray)
         if confidence < 70:  # You may need to adjust the threshold
-            cv2.putText(frame, f"USER: {label}", (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (36,255,12), 2)
+            recognized_name = folder_names[label]
+            cv2.putText(frame, f"Recognized: {recognized_name}", (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (36,255,12), 2)
         else:
             cv2.putText(frame, "Unknown", (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0,0,255), 2)
         cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 0, 0), 2)

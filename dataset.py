@@ -1,11 +1,6 @@
 import cv2
 import os
 
-# Create a directory for storing the dataset
-dataset_dir = "Dataset"
-if not os.path.exists(dataset_dir):
-    os.makedirs(dataset_dir)
-
 # Initialize camera
 cap = cv2.VideoCapture(0)
 
@@ -18,6 +13,11 @@ count = 0
 # Input user's name
 name = input("Enter your name: ")
 
+# Create a directory for the user's dataset
+user_dataset_dir = os.path.join("Dataset", name)
+if not os.path.exists(user_dataset_dir):
+    os.makedirs(user_dataset_dir)
+
 while True:
     ret, frame = cap.read()
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -28,14 +28,12 @@ while True:
         count += 1
 
         # Save the captured face
-        cv2.imwrite(f"{dataset_dir}/{name}_{count}.jpg", gray[y:y+h, x:x+w])
+        cv2.imwrite(f"{user_dataset_dir}/{count}.jpg", gray[y:y+h, x:x+w])
 
         # Display the image
         cv2.imshow('frame', frame)
 
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
-    elif count >= 30:  # Capture 30 images
+    if cv2.waitKey(1) & 0xFF == ord('q') or count >= 100:  # Capture 50 images or press 'q' to exit
         break
 
 cap.release()
