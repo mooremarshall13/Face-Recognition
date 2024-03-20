@@ -1,5 +1,5 @@
 import cv2
-import numpy as np
+import os
 import json
 
 # Initialize camera
@@ -15,6 +15,11 @@ face_cascade = cv2.CascadeClassifier("model/haarcascade_frontalface_default.xml"
 # Load metadata (folder names)
 with open("metadata.json", "r") as f:
     folder_names = json.load(f)
+
+# Create directory for storing captured images
+images_dir = "Images"
+if not os.path.exists(images_dir):
+    os.makedirs(images_dir)
 
 while True:
     ret, frame = cap.read()
@@ -33,8 +38,13 @@ while True:
         cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 0, 0), 2)
 
     cv2.imshow('frame', frame)
-    if cv2.waitKey(1) & 0xFF == ord('q'):
+    key = cv2.waitKey(1)
+    if key == ord('q'):
         break
+    elif key == ord(' '):
+        # Capture an image
+        filename = os.path.join(images_dir, f"captured_image_{len(os.listdir(images_dir))}.jpg")
+        cv2.imwrite(filename, frame)
 
 cap.release()
 cv2.destroyAllWindows()

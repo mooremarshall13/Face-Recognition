@@ -33,7 +33,7 @@ while True:
         # Display the image
         cv2.imshow('frame', frame)
 
-    if cv2.waitKey(1) & 0xFF == ord('q') or count >= 100:  # Capture 50 images or press 'q' to exit
+    if cv2.waitKey(1) & 0xFF == ord('q') or count >= 250:  # Capture 50 images or press 'q' to exit
         break
 
 cap.release()
